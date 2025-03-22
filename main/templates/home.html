@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %} Главная {%endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Все статьи</h1>
+    
+    <!-- Дополнительно: поиск -->
+    <form method="GET" class="mb-4">
+        <input type="text" name="q" placeholder="Поиск..." class="form-control">
+    </form>
+
+    {% for article in articles %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h2><a href="{% url 'article_detail' article.id %}">{{ article.title }}</a></h2>
+                <p class="text-muted">Автор: {{ article.author }}, {{ article.created_date }}</p>
+                <!-- Дополнительно: изображение -->
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" class="img-fluid mb-3">
+                {% endif %}
+                <p>{{ article.content|truncatechars:200 }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Пагинация -->
+    <div class="container d-flex flex-row justify-content-center m-3">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-outline-primary"><<</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary"> < </a>
+                {% else %}
+                <a href="?page=1" aria-disabled="true" class="btn btn-outline-secondary disabled"><<</a>
+                <a aria-disabled="true" class="btn btn-outline-secondary disabled"> < </a>
+            {% endif %}
+
+            <span class="current mx-2">
+                Страница {{ page_obj.number }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-primary">>></a>
+                {% else %}
+                <a class="btn btn-outline-secondary disabled">></a>
+                <a class="btn btn-outline-secondary disabled">>></a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

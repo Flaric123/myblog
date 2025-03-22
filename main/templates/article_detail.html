@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Детали статьи -->
+    <h1>{{ article.title }}</h1>
+    <p class="text-muted">
+        Автор: {{ article.author.username }} <br>
+        Категория: {{ article.category.name }} <br>
+        {{ article.created_date|date:"d.m.Y H:i" }}
+    </p>
+    
+    {% if article.image %}
+        <img src="{{ article.image.url }}" class="img-fluid mb-3">
+    {% endif %}
+    
+    <div class="article-content mb-5">
+        {{ article.content|linebreaks }}
+    </div>
+
+    <!-- Секция комментариев -->
+    <div class="comments-section">
+        <h3>Комментарии ({{ article.comments.count }})</h3>
+        
+        {% for comment in article.comments.all %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">
+                            {% firstof comment.user.username comment.guest_name %} ⇨
+                            {{ comment.created_date|timesince }} назад
+                        </span>
+                    </div>
+                    <p class="mt-2">{{ comment.content }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <div class="alert alert-info">Пока нет комментариев</div>
+        {% endfor %}
+
+        <!-- Форма комментариев -->
+        <div class="comment-form mt-5">
+            <h4>Оставить комментарий</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% if not user.is_authenticated %}
+                    <div class="mb-3">
+                        {{ form.guest_name.label_tag }}
+                        {{ form.guest_name }}
+                        {% if form.guest_name.errors %}
+                            <div class="text-danger">{{ form.guest_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <textarea 
+                            name="content" 
+                            class="form-control" 
+                            rows="3"
+                            placeholder="Ваш комментарий..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
