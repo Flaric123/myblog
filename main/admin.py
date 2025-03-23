@@ -7,7 +7,6 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ("category", "created_date")
     search_fields = ("title", "content")
 
-# admin.py
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('author_name', 'article', 'created_date')

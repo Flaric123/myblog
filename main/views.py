@@ -9,9 +9,8 @@ class HomeView(ListView):
     model = Article
     template_name = "home.html"
     context_object_name = "articles"
-    paginate_by = 5  # Пагинация
+    paginate_by = 5
 
-    # Дополнительно: поиск
     def get_queryset(self):
         query = self.request.GET.get("q")
         if query:
@@ -28,17 +27,19 @@ class ArticleDetailView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        article = self.get_object()
+        self.object = self.get_object()
         form = CommentForm(request.POST, user=request.user)
         
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.article = article
+            comment.article = self.object
             if request.user.is_authenticated:
                 comment.user = request.user
+            else:
+                comment.guest_name = form.cleaned_data.get('guest_name')
             comment.save()
-            messages.success(request, "Комментарий успешно добавлен!")
-            return redirect('article_detail', pk=article.pk)
+            messages.success(request, "Комментарий успешно оставлен!")
+            return redirect('article_detail', pk=self.object.pk)
         
         context = self.get_context_data(**kwargs)
         context['form'] = form

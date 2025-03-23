@@ -5,7 +5,6 @@
 {% block content %}
     <h1 class="mb-4">Все статьи</h1>
     
-    <!-- Дополнительно: поиск -->
     <form method="GET" class="mb-4">
         <input type="text" name="q" placeholder="Поиск..." class="form-control">
     </form>
@@ -15,7 +14,6 @@
             <div class="card-body">
                 <h2><a href="{% url 'article_detail' article.id %}">{{ article.title }}</a></h2>
                 <p class="text-muted">Автор: {{ article.author }}, {{ article.created_date }}</p>
-                <!-- Дополнительно: изображение -->
                 {% if article.image %}
                     <img src="{{ article.image.url }}" class="img-fluid mb-3">
                 {% endif %}
@@ -24,7 +22,6 @@
         </div>
     {% endfor %}
 
-    <!-- Пагинация -->
     <div class="container d-flex flex-row justify-content-center m-3">
         <span class="step-links">
             {% if page_obj.has_previous %}

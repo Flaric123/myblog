@@ -21,5 +21,5 @@ class CommentForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         if not self.user.is_authenticated and not cleaned_data.get('guest_name'):
-            raise forms.ValidationError("Пожалуйста, укажите ваше имя")
+            self.add_error('guest_name', "Пожалуйста, укажите ваше имя")
         return cleaned_data
